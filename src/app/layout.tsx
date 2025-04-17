@@ -1,4 +1,4 @@
-import './styles/globals.css';
+import '@/styles/globals.css';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { AppDataProvider } from '@/components/AppDataContext';
 
