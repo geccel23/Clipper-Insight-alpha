@@ -1,24 +1,38 @@
-// src/components/AuthContext.tsx
 'use client';
 
 import { createContext, useContext, useState, ReactNode } from 'react';
 
+interface User {
+  email: string;
+}
+
 interface AuthContextType {
-  isAuthenticated: boolean;
-  login: () => void;
+  user: User | null;
+  login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
 
-  const login = () => setIsAuthenticated(true);
-  const logout = () => setIsAuthenticated(false);
+  const login = async (email: string, password: string) => {
+    // ✅ Aqui você define a "senha"
+    if (email === 'admin@example.com' && password === '123456') {
+      setUser({ email });
+      return true;
+    }
+
+    return false;
+  };
+
+  const logout = () => {
+    setUser(null);
+  };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
