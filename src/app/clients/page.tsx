@@ -3,9 +3,27 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription
+} from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
 import ProtectedPage from '@/components/ProtectedPage';
@@ -20,8 +38,20 @@ interface Client {
 
 const ClientManagement = () => {
   const [clients, setClients] = useState<Client[]>([
-    { id: '1', name: 'João Silva', phone: '123-456-7890', email: 'joao@example.com', services: ['Haircut', 'Beard Trim'] },
-    { id: '2', name: 'Maria Oliveira', phone: '987-654-3210', email: 'maria@example.com', services: ['Haircut'] },
+    {
+      id: '1',
+      name: 'João Silva',
+      phone: '123-456-7890',
+      email: 'joao@example.com',
+      services: ['Haircut', 'Beard Trim'],
+    },
+    {
+      id: '2',
+      name: 'Maria Oliveira',
+      phone: '987-654-3210',
+      email: 'maria@example.com',
+      services: ['Haircut'],
+    },
   ]);
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -41,18 +71,25 @@ const ClientManagement = () => {
         email: newClientEmail,
         services: [],
       };
-      setClients([...clients, newClient]);
+
+      setClients((prev) => [...prev, newClient]);
       setNewClientName('');
       setNewClientPhone('');
       setNewClientEmail('');
       setOpen(false);
-      toast({ title: 'Client Registered', description: `Client ${newClient.name} has been successfully registered.` });
+
+      toast({
+        title: 'Client Registered',
+        description: `Client ${newClient.name} has been successfully registered.`,
+      });
     }
   };
 
-  const filteredClients = clients.filter(client =>
-    client.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredClients = [...clients]
+    .filter((client) =>
+      client.name.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <ProtectedPage>
@@ -70,7 +107,7 @@ const ClientManagement = () => {
           </nav>
 
           <Card className="shadow-xl">
-            <CardHeader className="flex-row justify-between items-center">
+            <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
                 <CardTitle className="text-2xl">Client Management</CardTitle>
                 <CardDescription>Effortlessly manage your client list.</CardDescription>
@@ -81,6 +118,7 @@ const ClientManagement = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-60"
+                  aria-label="Search clients"
                 />
                 <Button onClick={() => setOpen(true)}>Add Client</Button>
               </div>
@@ -97,8 +135,12 @@ const ClientManagement = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredClients.map(client => (
-                      <TableRow key={client.id} className="hover:bg-gray-200 cursor-pointer" onClick={() => setSelectedClient(client)}>
+                    {filteredClients.map((client) => (
+                      <TableRow
+                        key={client.id}
+                        className="hover:bg-gray-200 cursor-pointer"
+                        onClick={() => setSelectedClient(client)}
+                      >
                         <TableCell>{client.name}</TableCell>
                         <TableCell>{client.phone}</TableCell>
                         <TableCell>{client.email}</TableCell>
@@ -111,20 +153,38 @@ const ClientManagement = () => {
           </Card>
         </div>
 
+        {/* Add Client Dialog */}
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Add New Client</DialogTitle>
             </DialogHeader>
             <div className="space-y-3">
-              <Input placeholder="Name" value={newClientName} onChange={(e) => setNewClientName(e.target.value)} />
-              <Input placeholder="Phone" value={newClientPhone} onChange={(e) => setNewClientPhone(e.target.value)} />
-              <Input placeholder="Email" type="email" value={newClientEmail} onChange={(e) => setNewClientEmail(e.target.value)} />
+              <Input
+                placeholder="Name"
+                value={newClientName}
+                onChange={(e) => setNewClientName(e.target.value)}
+                aria-label="Client Name"
+              />
+              <Input
+                placeholder="Phone"
+                value={newClientPhone}
+                onChange={(e) => setNewClientPhone(e.target.value)}
+                aria-label="Client Phone"
+              />
+              <Input
+                placeholder="Email"
+                type="email"
+                value={newClientEmail}
+                onChange={(e) => setNewClientEmail(e.target.value)}
+                aria-label="Client Email"
+              />
             </div>
             <Button onClick={handleRegisterClient}>Register</Button>
           </DialogContent>
         </Dialog>
 
+        {/* Client Services Dialog */}
         <Dialog open={!!selectedClient} onOpenChange={() => setSelectedClient(null)}>
           <DialogContent>
             <DialogHeader>
@@ -132,8 +192,14 @@ const ClientManagement = () => {
             </DialogHeader>
             <ScrollArea className="h-[200px]">
               {selectedClient?.services.length ? (
-                selectedClient.services.map((service, idx) => <div key={idx} className="p-2 border-b">{service}</div>)
-              ) : <p className="p-4">No services recorded.</p>}
+                selectedClient.services.map((service, idx) => (
+                  <div key={idx} className="p-2 border-b">
+                    {service}
+                  </div>
+                ))
+              ) : (
+                <p className="p-4">No services recorded.</p>
+              )}
             </ScrollArea>
           </DialogContent>
         </Dialog>
