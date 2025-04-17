@@ -1,19 +1,22 @@
-
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-export function Dialog({ open, onOpenChange, children }: any) {
-  return open ? <div className="fixed inset-0 z-50 flex items-center justify-center">{children}</div> : null;
+export interface DialogProps extends React.HTMLAttributes<HTMLDivElement> {
+  isOpen: boolean;
 }
 
-export function DialogContent({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("bg-white rounded-lg shadow-lg p-6 max-w-md w-full", className)} {...props} />;
-}
+export function Dialog({ isOpen, className, children, ...props }: DialogProps) {
+  if (!isOpen) return null;
 
-export function DialogHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("mb-4", className)} {...props} />;
-}
-
-export function DialogTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
-  return <h2 className={cn("text-xl font-semibold", className)} {...props} />;
+  return (
+    <div
+      className={cn(
+        "fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50",
+        className
+      )}
+      {...props}
+    >
+      <div className="bg-white rounded-lg p-6 shadow-lg">{children}</div>
+    </div>
+  );
 }
