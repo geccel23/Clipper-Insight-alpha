@@ -1,20 +1,22 @@
 'use client';
 
-import { useAuth } from '@/components/AuthContext';
-import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from './AuthContext';
 
 export default function ProtectedPage({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!user) {
-      router.push('/login');
+    if (!loading && !user) {
+      router.replace('/login');
     }
-  }, [user, router]);
+  }, [user, loading, router]);
 
-  if (!user) return null;
+  if (loading || !user) {
+    return null; // ou um spinner se quiser
+  }
 
   return <>{children}</>;
 }
